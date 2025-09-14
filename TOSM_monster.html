@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TOSM 公會布告欄野外小怪查詢器</title>
+  <style>
+   :root{font-family: system-ui, -apple-system, 'Noto Sans TC', 'Segoe UI', Roboto, 'Helvetica Neue', Arial;}
+   body {
+   padding: 20px;
+   background: #1e1e2f; /* 深色背景 */
+   color: #f0f0f0;      /* 文字亮色 */
+   }
+   .card {
+   background: #2c2c3e;  /* 卡片深色但比背景亮一點 */
+   border-radius: 10px;
+   padding: 16px;
+   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+   max-width: 720px;
+   margin: 0 auto;
+   }
+   select {
+   padding: 8px;
+   border-radius: 6px;
+   border: 1px solid #555;
+   background: #3a3a4d;
+   color: #f0f0f0;
+   }
+   button {
+   padding: 8px 12px;
+   border-radius: 6px;
+   border: 0;
+   background: #4f5af0;
+   color: #fff;
+   cursor: pointer;
+   }
+   .result {
+   margin-top: 12px;
+   border-radius: 8px;
+   border: 1px solid #555;
+   padding: 12px;
+   background: #3a3a4d;
+   }
+   table {
+   width: 100%;
+   border-collapse: collapse;
+   margin-top: 8px;
+   }
+   th, td {
+   border: 1px solid #555;
+   padding: 6px;
+   text-align: center;
+   }
+   th {
+   background: #44445a;
+   }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>TOSM 公會布告欄野外小怪查詢器</h1>
+    <div class="controls">
+      <label>
+        屬性
+        <select id="attrSelect">
+          <option value="">-- 選擇屬性 --</option>
+          <option>冰</option>
+          <option>火</option>
+          <option>電</option>
+          <option>地</option>
+          <option>光</option>
+          <option>暗</option>
+        </select>
+      </label>
+      <label>
+        種族
+        <select id="raceSelect">
+          <option value="">-- 選擇種族 --</option>
+          <option>植物</option>
+          <option>野獸</option>
+          <option>變異</option>
+          <option>惡魔</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="result" class="result">
+      <div>尚未選擇條件</div>
+    </div>
+  </div>
+
+  <script>
+    // ====== 設定對應的文字結果 (支援多筆結果)
+    const mapResults = {
+      "冰_植物": ["EP9 女神的古院"],
+      "冰_野獸": ["EP9 女神的古院"],
+      "冰_變異": ["EP9 女神的古院"],
+      "冰_惡魔": ["EP5 卡羅利斯泉水"],
+      "火_植物": ["EP9 佩迪米安外城", "EP10 大教堂懺悔路"],
+      "火_野獸": ["EP9 佩迪米安外城"],
+      "火_變異": ["EP9 佩迪米安外城", "EP10 大教堂懺悔路"],
+      "火_惡魔": ["EP9 佩迪米安外城"],
+      "電_植物": ["EP9 魔法師之塔1層", "EP10 大教堂正殿"],
+      "電_野獸": ["EP10 大教堂正殿"],
+      "電_變異": ["EP9 魔法師之塔2層", "EP10 大教堂正殿"],
+      "電_惡魔": ["EP10 大教堂正殿"],
+      "地_植物": ["EP10 大教堂懺悔路"],
+      "地_野獸": ["EP10 大教堂懺悔路"],
+      "地_變異": ["EP10 大教堂懺悔路"],
+      "地_惡魔": ["EP9 魔法師之塔3層"],
+      "光_植物": ["EP8 魔族收監所第1區", "EP8 魔族收監所第3區"],
+      "光_野獸": ["EP7 魯卡斯高原", "EP7 王之高原"],
+      "光_變異": ["EP8 魔族收監所第1區"],
+      "暗_植物": ["EP9 女神的古院"],
+      "暗_野獸": ["EP9 女神的古院"],
+      "暗_變異": ["EP7 王陵2層"],
+      "暗_惡魔": ["EP8 魔族收監所第4區", "EP8 魔族收監所第5區", "EP10 大教堂至聖所"]
+    };
+
+    const attrSelect = document.getElementById('attrSelect');
+    const raceSelect = document.getElementById('raceSelect');
+    const resultEl = document.getElementById('result');
+
+    function displayResult(attr, race){
+      if(!attr || !race){
+        resultEl.innerHTML = '<div>請同時選擇屬性與種族</div>';
+        return;
+      }
+      const key = `${attr}_${race}`;
+      const val = mapResults[key];
+      if(!val){
+        resultEl.innerHTML = `<div>尚無設定「${key}」的地圖結果</div>`;
+        return;
+      }
+
+      let rows = val.map(r => `<tr><td>${attr}</td><td>${race}</td><td>${r}</td></tr>`).join("");
+      resultEl.innerHTML = `
+        <table>
+          <tr><th>屬性</th><th>種族</th><th>地圖結果</th></tr>
+          ${rows}
+        </table>`;
+    }
+
+    // 監聽 select 變動
+    [attrSelect, raceSelect].forEach(sel=>{
+      sel.addEventListener('change', ()=>{
+        displayResult(attrSelect.value, raceSelect.value);
+      });
+    });
+  </script>
+</body>
+</html>
